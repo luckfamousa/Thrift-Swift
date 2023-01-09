@@ -132,8 +132,14 @@ public class THTTPSessionTransport: TAsyncTransport {
           if taskError == nil && httpResponse.statusCode != 200 {
             if httpResponse.statusCode == 401 {
               error = THTTPTransportError(error: .authentication)
-            } else {
-              error = THTTPTransportError(error: .invalidStatus(statusCode: httpResponse.statusCode))
+            } else {                
+                if let _data = data {
+                    error = THTTPTransportError(
+                        error: .invalidStatus(statusCode: httpResponse.statusCode),
+                        message: String(decoding: _data, as: UTF8.self))
+                } else {
+                    error = THTTPTransportError(error: .invalidStatus(statusCode: httpResponse.statusCode))
+                }
             }
           }
           
